@@ -1,3 +1,3 @@
 # GuessTheTime
-PUM - projekt zaliczeniowy
-[Opis projektu](opis-projektu.pdf)
+PUM - projekt zaliczeniowy  
+[OPIS PROJEKTU](opis-projektu.pdf)
