@@ -1,6 +1,7 @@
 package com.example.guessthetime
 
 import android.app.Application
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,7 +31,7 @@ fun RegisterScreen() {
     }
     val users = viewModel.usersState.collectAsStateWithLifecycle().value
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().padding(top=40.dp)
+        modifier = Modifier.fillMaxSize().padding(top=40.dp)
     ) {
         items(users.size) {
             Text(

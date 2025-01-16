@@ -1,5 +1,7 @@
 package com.example.guessthetime
 
+import kotlinx.coroutines.flow.Flow
+
 class UserRepository(private val userDao: UserDao) {
 
     fun getUsers() = userDao.getUsers()
@@ -19,4 +21,6 @@ class UserRepository(private val userDao: UserDao) {
     suspend fun delete(user: User) = userDao.delete(user)
 
     suspend fun update(user: User) = userDao.update(user)
+
+    fun validateLogin(userLogin: String, userPassword: String): Flow<List<User>> = userDao.validateLogin(userLogin, userPassword)
 }

@@ -40,7 +40,6 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(user: User)
 
-
     @Query("DELETE FROM users_table")
     suspend fun deleteAll()
 
@@ -52,5 +51,8 @@ interface UserDao {
 
     @Query("DELETE FROM users_table WHERE id=:userId")
     fun deleteById(userId : Int)
+
+    @Query("SELECT * FROM users_table WHERE login=:userLogin AND password=:userPassword")
+    fun validateLogin(userLogin: String, userPassword: String): Flow<List<User>>
 
 }

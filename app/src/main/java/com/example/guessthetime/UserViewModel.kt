@@ -14,6 +14,9 @@ class UserViewModel(application: Application) : ViewModel() {
     val usersState: StateFlow<List<User>>
         get() = _usersState
 
+    private val _loginResult = MutableStateFlow<List<User>>(emptyList())
+    val loginResult: StateFlow<List<User>> = _loginResult
+
     init {
         val db = UserDatabase.getDatabase(application)
         val dao = db.userDao()
@@ -60,6 +63,14 @@ class UserViewModel(application: Application) : ViewModel() {
     fun updateUser(user: User) {
         viewModelScope.launch {
             repository.update(user)
+        }
+    }
+
+    fun validateLogin(login: String, password: String) {
+        viewModelScope.launch {
+            repository.validateLogin(login, password).collect { users ->
+                _loginResult.value = users
+            }
         }
     }
 }
