@@ -26,9 +26,12 @@ fun RegisterScreen() {
         "UserViewModel",
         UserViewModelFactory(LocalContext.current.applicationContext as Application)
     )
+    /*
     LaunchedEffect(Unit) {
         viewModel.addAllUsers(DataProvider.users)
+        viewModel.deleteAllUsers()
     }
+    */
     val users = viewModel.usersState.collectAsStateWithLifecycle().value
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(top=40.dp)

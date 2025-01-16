@@ -1,5 +1,6 @@
 package com.example.guessthetime
 
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.flow.Flow
 
 class UserRepository(private val userDao: UserDao) {
@@ -14,6 +15,10 @@ class UserRepository(private val userDao: UserDao) {
         users.forEach { user ->
             userDao.insert(user)
         }
+    }
+
+    suspend fun deleteAll() {
+        userDao.deleteAll()
     }
 
     // suspend fun delete(id: Int) = gradeDao.deleteById(id)

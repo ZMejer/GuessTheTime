@@ -38,8 +38,8 @@ fun LoginScreen() {
     )
     val login = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    var loginResult = viewModel.loginResult.collectAsStateWithLifecycle().value
-    // Użyj jednej Column, żeby uniknąć przesłaniania widoków
+    val loginResult = viewModel.loginResult.collectAsStateWithLifecycle().value
+    val isUserLoggedIn = viewModel.isUserLoggedIn.value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,8 +53,6 @@ fun LoginScreen() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 30.dp)
         )
-
-        // TextField do logowania
         OutlinedTextField(
             value = login.value,
             onValueChange = { newLogin -> login.value = newLogin },
@@ -65,8 +63,6 @@ fun LoginScreen() {
                 .padding(start = 20.dp, end = 20.dp),
             textStyle = TextStyle(fontSize = 29.sp)
         )
-
-        // TextField do hasła
         OutlinedTextField(
             value = password.value,
             onValueChange = { newPasswd -> password.value = newPasswd },
@@ -78,8 +74,6 @@ fun LoginScreen() {
             textStyle = TextStyle(fontSize = 29.sp),
             visualTransformation = PasswordVisualTransformation()
         )
-
-        // Przycisk do logowania
         Button(
             onClick = {viewModel.validateLogin(login.value, password.value)
             },
@@ -91,12 +85,13 @@ fun LoginScreen() {
         ) {
             Text("Zaloguj się", fontSize = 29.sp)
         }
+        Text(text="${isUserLoggedIn.toString()}")
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(top=40.dp)
         ) {
             items(loginResult.size) {
                 Text(
-                    text = "${loginResult[it].login} ${loginResult[it].password} ${loginResult[it].name}",
+                    text = "${loginResult[it].login} ${loginResult[it].password} ${loginResult[it].id}",
                 )
             }
         }
