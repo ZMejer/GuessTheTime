@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,7 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.guessthetime.ui.theme.GuessTheTimeTheme
-
 @Composable
 fun LoginScreen() {
     val viewModel: UserViewModel = viewModel(
@@ -38,20 +38,21 @@ fun LoginScreen() {
     )
     val login = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    val loginResult = viewModel.loginResult.collectAsStateWithLifecycle().value
-    val isUserLoggedIn = viewModel.isUserLoggedIn.value
+
+    val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsState(initial = false)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp) // Zwiększenie odstępów
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
             text = "Logowanie",
             fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 30.dp)
+            modifier = Modifier.padding(bottom = 15.dp)
         )
         OutlinedTextField(
             value = login.value,
@@ -75,7 +76,8 @@ fun LoginScreen() {
             visualTransformation = PasswordVisualTransformation()
         )
         Button(
-            onClick = {viewModel.validateLogin(login.value, password.value)
+            onClick = {
+                viewModel.validateLogin(login.value, password.value)
             },
             modifier = Modifier
                 .height(80.dp)
@@ -85,16 +87,11 @@ fun LoginScreen() {
         ) {
             Text("Zaloguj się", fontSize = 29.sp)
         }
-        Text(text="${isUserLoggedIn.toString()}")
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(top=40.dp)
-        ) {
-            items(loginResult.size) {
-                Text(
-                    text = "${loginResult[it].login} ${loginResult[it].password} ${loginResult[it].id}",
-                )
-            }
-        }
+        Text(
+            text = if (isUserLoggedIn.value) "Zalogowany: true" else "Zalogowany: false",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(top = 20.dp)
+        )
     }
 }
 

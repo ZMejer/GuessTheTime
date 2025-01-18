@@ -13,19 +13,22 @@ import androidx.compose.runtime.State
 class UserViewModel(application: Application) : ViewModel() {
 
     private val repository: UserRepository
+    private val userPreferences = UserPreferences(application.applicationContext)
+
     private val _usersState = MutableStateFlow<List<User>>(emptyList())
     val usersState: StateFlow<List<User>> get() = _usersState
 
     private val _loginResult = MutableStateFlow<List<User>>(emptyList())
     val loginResult: StateFlow<List<User>> = _loginResult
 
-    private val _isUserLoggedIn = mutableStateOf(false)
-    val isUserLoggedIn: State<Boolean> = _isUserLoggedIn
+    private val _isUserLoggedIn = userPreferences.getLoggedFlow(application)
+    val isUserLoggedIn: Flow<Boolean> get() = _isUserLoggedIn
+
 
     init {
         val db = UserDatabase.getDatabase(application)
         val dao = db.userDao()
-        repository = UserRepository(dao)
+        repository = UserRepository(dao, application)
         fetchUsers()
     }
 
@@ -37,15 +40,6 @@ class UserViewModel(application: Application) : ViewModel() {
         }
     }
 
-    fun getUserById(id: Int): User? {
-        return _usersState.value.find { it.id == id }
-    }
-
-    fun clearUsers() {
-        viewModelScope.launch {
-            repository.clear()
-        }
-    }
 
     fun addUser(user: User) {
         viewModelScope.launch {
@@ -53,44 +47,21 @@ class UserViewModel(application: Application) : ViewModel() {
         }
     }
 
-    fun addAllUsers(users: List<User>) {
-        viewModelScope.launch {
-            repository.addAll(users)
-        }
-    }
-
-    fun deleteAllUsers() {
-        viewModelScope.launch {
-            repository.deleteAll()
-        }
-    }
-
-    fun deleteUser(user: User) {
-        viewModelScope.launch {
-            repository.delete(user)
-        }
-    }
-
-    fun updateUser(user: User) {
-        viewModelScope.launch {
-            repository.update(user)
-        }
-    }
-
     fun validateLogin(login: String, password: String) {
         viewModelScope.launch {
             repository.validateLogin(login, password).collect { users ->
-                _loginResult.value = users
-                checkLogin()
+                if (users.isNotEmpty()) {
+                    repository.logIn(true)
+                } else {
+                    repository.logIn(false)
+                }
             }
         }
     }
 
-    private fun checkLogin() {
-        val isValid = _loginResult.value.isNotEmpty()
-        _isUserLoggedIn.value = isValid
-        if (isValid) {
-            _loginResult.value = emptyList()
+    fun logout() {
+        viewModelScope.launch {
+            repository.logIn(false)
         }
     }
 }

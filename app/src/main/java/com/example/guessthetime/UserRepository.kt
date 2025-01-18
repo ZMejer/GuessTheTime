@@ -1,31 +1,22 @@
 package com.example.guessthetime
 
+import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.flow.Flow
 
-class UserRepository(private val userDao: UserDao) {
+class UserRepository(private val userDao: UserDao, private val application: Application) {
 
     fun getUsers() = userDao.getUsers()
-
-    suspend fun clear() = userDao.deleteAll()
-
+    private val userPreferences = UserPreferences(application)
     suspend fun add(user: User) = userDao.insert(user)
 
-    suspend fun addAll(users: List<User>) {
-        users.forEach { user ->
-            userDao.insert(user)
-        }
+    fun validateLogin(userLogin: String, userPassword: String): Flow<List<User>> =
+        userDao.validateLogin(userLogin, userPassword)
+
+    suspend fun logIn(isUserLoggedIn: Boolean) {
+        userPreferences.storeLogged(application, isUserLoggedIn)
     }
 
-    suspend fun deleteAll() {
-        userDao.deleteAll()
-    }
+    suspend fun logout() = logIn(false)
 
-    // suspend fun delete(id: Int) = gradeDao.deleteById(id)
-
-    suspend fun delete(user: User) = userDao.delete(user)
-
-    suspend fun update(user: User) = userDao.update(user)
-
-    fun validateLogin(userLogin: String, userPassword: String): Flow<List<User>> = userDao.validateLogin(userLogin, userPassword)
 }

@@ -67,4 +67,9 @@ dependencies {
     kapt (libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
     implementation (libs.androidx.navigation.compose)
+
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.lifecycle.runtime.compose)
+    implementation (libs.androidx.datastore.preferences)
 }
