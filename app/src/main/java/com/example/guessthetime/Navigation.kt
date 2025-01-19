@@ -1,6 +1,7 @@
 package com.example.guessthetime
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -9,10 +10,16 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -39,14 +46,30 @@ fun BottomNavGraph(navController: NavHostController){
     ) {
         composable(route = Screens.RegisterScreen.route){ RegisterScreen() }
         composable(route = Screens.LoginScreen.route){ LoginScreen() }
+        composable(route = Screens.GameScreen.route){ GameScreen() }
+        composable(route = Screens.LeaderBoardScreen.route){ LeaderBoardScreen() }
     }
 }
 
 @Composable
 fun BottomMenu(navController: NavHostController) {
-    val screens = listOf(
-        BottomBar.RegisterScreen, BottomBar.LoginScreen
+    val viewModel: UserViewModel = viewModel(
+        LocalViewModelStoreOwner.current!!,
+        "UserViewModel",
+        UserViewModelFactory(LocalContext.current.applicationContext as Application)
     )
+    val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsState(initial = false)
+    val screens = if (isUserLoggedIn.value) {
+        listOf(
+            BottomBar.GameScreen, BottomBar.LeaderBoardScreen, BottomBar.LoginScreen
+        )
+    } else {
+        listOf(
+            BottomBar.RegisterScreen, BottomBar.LoginScreen
+        )
+    }
+
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     NavigationBar(
