@@ -40,9 +40,20 @@ fun Navigation(){
 }
 @Composable
 fun BottomNavGraph(navController: NavHostController){
+    val viewModel: UserViewModel = viewModel(
+        LocalViewModelStoreOwner.current!!,
+        "UserViewModel",
+        UserViewModelFactory(LocalContext.current.applicationContext as Application)
+    )
+    val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsState(initial = false)
+
     NavHost(
         navController = navController,
-        startDestination = Screens.RegisterScreen.route
+        startDestination = if(isUserLoggedIn.value) {
+            Screens.GameScreen.route
+        } else {
+            Screens.LoginScreen.route
+        }
     ) {
         composable(route = Screens.RegisterScreen.route){ RegisterScreen() }
         composable(route = Screens.LoginScreen.route){ LoginScreen() }
