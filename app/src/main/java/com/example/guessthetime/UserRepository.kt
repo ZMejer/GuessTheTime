@@ -19,4 +19,9 @@ class UserRepository(private val userDao: UserDao, private val application: Appl
 
     suspend fun logout() = logIn(false)
 
+    fun getUserById(userId : Int) = userDao.getUserById(userId)
+
+    suspend fun storeUser(userId: Int) {
+        userPreferences.storeUserId(application, userId)
+    }
 }

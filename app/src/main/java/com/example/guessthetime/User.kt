@@ -55,4 +55,7 @@ interface UserDao {
     @Query("SELECT * FROM users_table WHERE login=:userLogin AND password=:userPassword")
     fun validateLogin(userLogin: String, userPassword: String): Flow<List<User>>
 
+    @Query("SELECT * FROM users_table WHERE id=:userId")
+    fun getUserById(userId : Int): Flow<User>
+
 }

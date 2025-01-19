@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,7 +66,7 @@ fun RegisterScreen() {
         )
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(17.dp) // Zwiększenie odstępów
+            verticalArrangement = Arrangement.spacedBy(17.dp)
         ) {
             item {
                 OutlinedTextField(
@@ -73,8 +74,8 @@ fun RegisterScreen() {
                     onValueChange = { newName -> name.value = newName },
                     label = { Text("Imię", fontSize = 29.sp) },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(85.dp)
+                        .width(400.dp)
+                        .height(80.dp)
                         .padding(start = 20.dp, end = 20.dp),
                     textStyle = TextStyle(fontSize = 29.sp)
                 )
@@ -85,8 +86,8 @@ fun RegisterScreen() {
                     onValueChange = { newSurname -> surname.value = newSurname },
                     label = { Text("Nazwisko", fontSize = 29.sp) },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(85.dp)
+                        .width(400.dp)
+                        .height(80.dp)
                         .padding(start = 20.dp, end = 20.dp),
                     textStyle = TextStyle(fontSize = 29.sp)
                 )
@@ -97,8 +98,8 @@ fun RegisterScreen() {
                     onValueChange = { newEmail -> email.value = newEmail },
                     label = { Text("E-mail", fontSize = 29.sp) },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(85.dp)
+                        .width(400.dp)
+                        .height(80.dp)
                         .padding(start = 20.dp, end = 20.dp),
                     textStyle = TextStyle(fontSize = 29.sp)
                 )
@@ -109,8 +110,8 @@ fun RegisterScreen() {
                     onValueChange = { newLogin -> login.value = newLogin },
                     label = { Text("Login", fontSize = 29.sp) },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(85.dp)
+                        .width(400.dp)
+                        .height(80.dp)
                         .padding(start = 20.dp, end = 20.dp),
                     textStyle = TextStyle(fontSize = 29.sp)
                 )
@@ -121,8 +122,8 @@ fun RegisterScreen() {
                     onValueChange = { newPasswd -> password.value = newPasswd },
                     label = { Text("Hasło", fontSize = 29.sp) },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(85.dp)
+                        .width(400.dp)
+                        .height(80.dp)
                         .padding(start = 20.dp, end = 20.dp),
                     textStyle = TextStyle(fontSize = 29.sp),
                     visualTransformation = PasswordVisualTransformation()
@@ -134,9 +135,9 @@ fun RegisterScreen() {
                         viewModel.addUser(User(0,name.value.toString(),surname.value.toString(),email.value.toString(),login.value.toString(),password.value.toString()))
                     },
                     modifier = Modifier
-                        .height(80.dp)
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp),
+                        .width(400.dp)
+                        .height(85.dp)
+                        .padding(start = 20.dp, end = 20.dp, top=10.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text("Zarejestruj się", fontSize = 29.sp)

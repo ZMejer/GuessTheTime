@@ -24,6 +24,8 @@ class UserViewModel(application: Application) : ViewModel() {
     private val _isUserLoggedIn = userPreferences.getLoggedFlow(application)
     val isUserLoggedIn: Flow<Boolean> get() = _isUserLoggedIn
 
+    private val _userId = userPreferences.getUserIdFlow(application)
+    val userId: Flow<Int> get() = _userId
 
     init {
         val db = UserDatabase.getDatabase(application)
@@ -52,6 +54,7 @@ class UserViewModel(application: Application) : ViewModel() {
             repository.validateLogin(login, password).collect { users ->
                 if (users.isNotEmpty()) {
                     repository.logIn(true)
+                    repository.storeUser(users[0].id)
                 } else {
                     repository.logIn(false)
                 }
@@ -64,4 +67,6 @@ class UserViewModel(application: Application) : ViewModel() {
             repository.logIn(false)
         }
     }
+
+    fun getUserById(userId : Int) = repository.getUserById(userId)
 }
