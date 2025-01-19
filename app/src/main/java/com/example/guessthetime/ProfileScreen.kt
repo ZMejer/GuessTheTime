@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,10 +20,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +38,6 @@ import com.example.guessthetime.ui.theme.GuessTheTimeTheme
 
 @Composable
 fun ProfileScreen() {
-
     val viewModel: UserViewModel = viewModel(
         LocalViewModelStoreOwner.current!!,
         "UserViewModel",
@@ -45,25 +49,65 @@ fun ProfileScreen() {
     val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsState(initial = false)
     val userId = viewModel.userId.collectAsState(initial = 0)
     val user = viewModel.getUserById(userId.value).collectAsState(initial = null)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Text(
             text = "Mój profil",
             fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 15.dp)
+            modifier = Modifier.padding(bottom = 30.dp)
         )
-        Text(
-            text = "${user.value?.name} ${user.value?.surname}",
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 15.dp)
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = buildAnnotatedString {
+                    append("Imię: ")
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                        append(user.value?.name ?: "")
+                    }
+                },
+                fontSize = 30.sp,
+            )
+            Text(
+                text = buildAnnotatedString {
+                    append("Nazwisko: ")
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                        append(user.value?.surname ?: "")
+                    }
+                },
+                fontSize = 30.sp,
+            )
+            Text(
+                text = buildAnnotatedString {
+                    append("E-mail: ")
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                        append(user.value?.email ?: "")
+                    }
+                },
+                fontSize = 30.sp,
+            )
+            Text(
+                text = buildAnnotatedString {
+                    append("Login: ")
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                        append(user.value?.login ?: "")
+                    }
+                },
+                fontSize = 30.sp,
+                modifier = Modifier.padding(bottom=30.dp)
+            )
+        }
         Button(
             onClick = {
                 viewModel.logout()
@@ -71,13 +115,14 @@ fun ProfileScreen() {
             modifier = Modifier
                 .height(80.dp)
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp),
+                .padding(horizontal = 20.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
             Text("Wyloguj się", fontSize = 29.sp)
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

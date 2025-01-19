@@ -55,18 +55,18 @@ fun RegisterScreen() {
     val password = remember { mutableStateOf("") }
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(top = 100.dp, bottom=150.dp),
+        .padding(top = 110.dp, bottom=150.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = "Rejestracja",
             fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 30.dp)
+            modifier = Modifier.padding(bottom = 35.dp)
         )
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(17.dp)
+            verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             item {
                 OutlinedTextField(
@@ -136,8 +136,8 @@ fun RegisterScreen() {
                     },
                     modifier = Modifier
                         .width(400.dp)
-                        .height(85.dp)
-                        .padding(start = 20.dp, end = 20.dp, top=10.dp),
+                        .height(95.dp)
+                        .padding(start = 20.dp, end = 20.dp, top=20.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text("Zarejestruj się", fontSize = 29.sp)
