@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.State
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 
@@ -38,11 +39,23 @@ class UserViewModel(application: Application) : ViewModel() {
     private val _seconds = MutableStateFlow(Random.nextInt(0, 60))
     val seconds: StateFlow<Int> get() = _seconds
 
+    private val _userPoints = MutableStateFlow(0)
+    val userPoints: StateFlow<Int> get() = _userPoints
+
     init {
         val db = UserDatabase.getDatabase(application)
         val dao = db.userDao()
         repository = UserRepository(dao, application)
         fetchUsers()
+        fetchUserPoints()
+    }
+
+    private fun fetchUserPoints() {
+        viewModelScope.launch {
+            userPreferences.getUserPointsFlow().collect { points ->
+                _userPoints.value = points
+            }
+        }
     }
 
     private fun fetchUsers() {
@@ -57,6 +70,12 @@ class UserViewModel(application: Application) : ViewModel() {
     fun addUser(user: User) {
         viewModelScope.launch {
             repository.add(user)
+        }
+    }
+
+    fun addAllUsers(users: List<User>) {
+        viewModelScope.launch {
+            repository.addAll(users)
         }
     }
 
@@ -82,7 +101,7 @@ class UserViewModel(application: Application) : ViewModel() {
     fun getUserById(userId : Int) = repository.getUserById(userId)
 
     fun updateTime() {
-        _hours.value = Random.nextInt(0,13)
+        _hours.value = Random.nextInt(1,13)
         _minutes.value = Random.nextInt(0,60)
         _seconds.value = Random.nextInt(0,60)
     }
@@ -101,6 +120,32 @@ class UserViewModel(application: Application) : ViewModel() {
             return -1.0
         }
         return String.format("%.2f", accuracy).toDouble()
+    }
 
+    fun calculatePoints(accuracy : Double) : Int {
+        val roundedAccuracy = "%.2f".format(accuracy).toDouble()
+        return when (roundedAccuracy) {
+            in 0.0..80.0 -> 0
+            in 81.0..90.0 -> 1
+            in 91.0..95.0 -> 5
+            in 96.0..100.0 -> 10
+            else -> 0
+        }
+    }
+
+    fun updatePoints(userId: Int, newPoints: Int) {
+        viewModelScope.launch {
+            repository.updatePoints(userId, newPoints)
+            userPreferences.storeUserPoints(newPoints)
+        }
+    }
+
+    fun getUserPoints(userId: Int) {
+        viewModelScope.launch {
+            repository.getUserById(userId).collect { user ->
+                _userPoints.value = user.points
+                userPreferences.storeUserPoints(user.points)
+            }
+        }
     }
 }

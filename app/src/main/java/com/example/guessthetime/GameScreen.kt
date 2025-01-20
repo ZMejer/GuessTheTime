@@ -38,11 +38,13 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -106,6 +108,8 @@ fun GameScreen() {
     val accuracy = remember { mutableStateOf("")}
     val points = remember { mutableStateOf("")}
 
+    val userPoints = viewModel.userPoints.collectAsState(initial = 0)
+    val userId = viewModel.userId.collectAsState(initial = 0)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier=Modifier.fillMaxHeight()) {
 
@@ -136,7 +140,7 @@ fun GameScreen() {
         OutlinedTextField(
             value = hour.value,
             onValueChange = { newHour -> hour.value = newHour },
-            label = { Text("Godzina", fontSize = 25.sp) },
+            label = { Text("Godzina (01-12)", fontSize = 25.sp) },
             modifier = Modifier
                 .width(400.dp)
                 .height(60.dp)
@@ -168,13 +172,24 @@ fun GameScreen() {
                 answer.value = String.format("%02d:%02d:%02d", hours.value, minutes.value, seconds.value)
                 viewModel.updateTime()
                 accuracy.value = viewModel.calculateAccuracy(
-                    (hour.value.toIntOrNull()?.takeIf { it in 0..23 } ?: -1),
+                    (hour.value.toIntOrNull()?.takeIf { it in 1..13 } ?: -1),
                     (minute.value.toIntOrNull()?.takeIf { it in 0..59 } ?: -1),
                     (second.value.toIntOrNull()?.takeIf { it in 0..59 } ?: -1),
                     hours.value,
                     minutes.value,
                     seconds.value
-                ).toString()},
+                ).toString()
+
+                if (accuracy.value.toDoubleOrNull() == -1.0) {
+                    points.value = "Błąd"
+                } else {
+                    points.value = viewModel.calculatePoints(accuracy.value.toDouble()).toString()
+                }
+                val pointsInt = points.value.toIntOrNull() ?: 0
+                val prevPoints = viewModel.userPoints.value
+                viewModel.updatePoints(userId.value, pointsInt + prevPoints)
+                viewModel.getUserPoints(userId.value)
+            },
             modifier = Modifier
                 .width(400.dp)
                 .height(70.dp)
@@ -183,6 +198,7 @@ fun GameScreen() {
         ) {
             Text("Zatwierdź", fontSize = 27.sp)
         }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -209,11 +225,20 @@ fun GameScreen() {
                             append(" %")
                         }
                     }
-
                 }
             }, fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
 
-            Text("Punkty: ", fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
+            Text(text = buildAnnotatedString {
+                append("Punkty: ")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                append(points.value)
+                    if (accuracy.value.toDoubleOrNull() != -1.0) {
+                        if (points.value.isNotEmpty()) {
+                            append(" pkt")
+                        }
+                    }
+                }
+            }, fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
         }
     }
 }

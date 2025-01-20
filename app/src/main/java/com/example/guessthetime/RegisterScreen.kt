@@ -44,9 +44,9 @@ fun RegisterScreen() {
     /*
     LaunchedEffect(Unit) {
         viewModel.addAllUsers(DataProvider.users)
-        viewModel.deleteAllUsers()
     }
     */
+    viewModel.logout()
     val users = viewModel.usersState.collectAsStateWithLifecycle().value
     val name = remember { mutableStateOf("") }
     val surname = remember { mutableStateOf("") }

@@ -50,7 +50,7 @@ fun BottomNavGraph(navController: NavHostController){
     NavHost(
         navController = navController,
         startDestination = if(isUserLoggedIn.value) {
-            Screens.GameScreen.route
+            Screens.LoginScreen.route
         } else {
             Screens.LoginScreen.route
         }
