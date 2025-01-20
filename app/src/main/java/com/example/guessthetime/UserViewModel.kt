@@ -81,5 +81,9 @@ class UserViewModel(application: Application) : ViewModel() {
 
     fun getUserById(userId : Int) = repository.getUserById(userId)
 
-
+    fun updateTime() {
+        _hours.value = Random.nextInt(0,13)
+        _minutes.value = Random.nextInt(0,60)
+        _seconds.value = Random.nextInt(0,60)
+    }
 }

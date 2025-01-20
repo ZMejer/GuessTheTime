@@ -40,6 +40,9 @@ import kotlin.random.Random
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -99,11 +102,8 @@ fun GameScreen() {
     val hour = remember { mutableStateOf("") }
     val minute = remember { mutableStateOf("") }
     val second = remember { mutableStateOf("") }
-    val answer = remember {
-        mutableStateOf(
-            String.format("%02d:%02d:%02d", hours.value, minutes.value, seconds.value)
-        )
-    }
+    var answer = remember { mutableStateOf("")}
+
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier=Modifier.fillMaxHeight()) {
 
         Box(contentAlignment = Alignment.Center, modifier = Modifier
@@ -160,6 +160,8 @@ fun GameScreen() {
         )
         Button(
             onClick = {
+                answer.value = String.format("%02d:%02d:%02d", hours.value, minutes.value, seconds.value)
+                viewModel.updateTime()
             },
             modifier = Modifier
                 .width(400.dp)
@@ -176,7 +178,13 @@ fun GameScreen() {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ){
-            Text("Odpowiedź: ${answer.value}", fontSize = 27.sp, modifier = Modifier.padding(top=20.dp, start=25.dp))
+            Text(text = buildAnnotatedString {
+                append("Odpowiedź: ")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    append(answer.value ?: "")
+                }
+            }, fontSize = 27.sp, modifier = Modifier.padding(top=20.dp, start=25.dp))
+
             Text("Dokładność: ", fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
             Text("Punkty: ", fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
         }
