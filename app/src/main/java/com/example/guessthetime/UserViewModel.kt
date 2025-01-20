@@ -1,5 +1,6 @@
 package com.example.guessthetime
 import android.app.Application
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.State
+import kotlin.random.Random
 
 
 class UserViewModel(application: Application) : ViewModel() {
@@ -26,6 +28,15 @@ class UserViewModel(application: Application) : ViewModel() {
 
     private val _userId = userPreferences.getUserIdFlow(application)
     val userId: Flow<Int> get() = _userId
+
+    private val _hours = MutableStateFlow(Random.nextInt(0, 13))
+    val hours: StateFlow<Int> get() = _hours
+
+    private val _minutes = MutableStateFlow(Random.nextInt(0, 60))
+    val minutes: StateFlow<Int> get() = _minutes
+
+    private val _seconds = MutableStateFlow(Random.nextInt(0, 60))
+    val seconds: StateFlow<Int> get() = _seconds
 
     init {
         val db = UserDatabase.getDatabase(application)
@@ -69,4 +80,6 @@ class UserViewModel(application: Application) : ViewModel() {
     }
 
     fun getUserById(userId : Int) = repository.getUserById(userId)
+
+
 }
