@@ -86,4 +86,21 @@ class UserViewModel(application: Application) : ViewModel() {
         _minutes.value = Random.nextInt(0,60)
         _seconds.value = Random.nextInt(0,60)
     }
+
+    fun calculateAccuracy(answeredHour: Int, answeredMinute: Int, answeredSecond: Int, correctHour: Int, correctMinute: Int, correctSecond: Int) : Double {
+        val hourDifference = Math.abs(answeredHour - correctHour)
+        val maxHourDifference = 23
+        val hourAccuracy = ((maxHourDifference - hourDifference) / maxHourDifference.toDouble()) * 100
+        val minuteDifference = Math.abs(answeredMinute - correctMinute)
+        val maxDifference = 59
+        val minuteAccuracy = ((maxDifference - minuteDifference) / maxDifference.toDouble()) * 100
+        val secondDifference = Math.abs(answeredSecond - correctSecond)
+        val secondAccuracy = ((maxDifference - secondDifference) / maxDifference.toDouble()) * 100
+        val accuracy = (hourAccuracy + minuteAccuracy + secondAccuracy) / 3
+        if (answeredHour == -1 || answeredMinute == -1 || answeredSecond == -1 || correctHour == -1 || correctMinute == -1 || correctSecond == -1 ) {
+            return -1.0
+        }
+        return String.format("%.2f", accuracy).toDouble()
+
+    }
 }

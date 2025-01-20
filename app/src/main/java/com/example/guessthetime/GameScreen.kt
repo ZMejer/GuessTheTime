@@ -102,7 +102,10 @@ fun GameScreen() {
     val hour = remember { mutableStateOf("") }
     val minute = remember { mutableStateOf("") }
     val second = remember { mutableStateOf("") }
-    var answer = remember { mutableStateOf("")}
+    val answer = remember { mutableStateOf("")}
+    val accuracy = remember { mutableStateOf("")}
+    val points = remember { mutableStateOf("")}
+
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier=Modifier.fillMaxHeight()) {
 
@@ -112,7 +115,9 @@ fun GameScreen() {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 //verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize().padding(top = 60.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 60.dp)
             ) {
                 Text(
                     text = "Guess The Time",
@@ -136,7 +141,7 @@ fun GameScreen() {
                 .width(400.dp)
                 .height(60.dp)
                 .padding(start = 20.dp, end = 20.dp),
-            textStyle = TextStyle(fontSize = 29.sp)
+            textStyle = TextStyle(fontSize = 20.sp)
         )
         OutlinedTextField(
             value = minute.value,
@@ -146,7 +151,7 @@ fun GameScreen() {
                 .width(400.dp)
                 .height(60.dp)
                 .padding(start = 20.dp, end = 20.dp),
-            textStyle = TextStyle(fontSize = 29.sp)
+            textStyle = TextStyle(fontSize = 20.sp)
         )
         OutlinedTextField(
             value = second.value,
@@ -156,17 +161,24 @@ fun GameScreen() {
                 .width(400.dp)
                 .height(60.dp)
                 .padding(start = 20.dp, end = 20.dp),
-            textStyle = TextStyle(fontSize = 29.sp)
+            textStyle = TextStyle(fontSize = 20.sp)
         )
         Button(
             onClick = {
                 answer.value = String.format("%02d:%02d:%02d", hours.value, minutes.value, seconds.value)
                 viewModel.updateTime()
-            },
+                accuracy.value = viewModel.calculateAccuracy(
+                    (hour.value.toIntOrNull()?.takeIf { it in 0..23 } ?: -1),
+                    (minute.value.toIntOrNull()?.takeIf { it in 0..59 } ?: -1),
+                    (second.value.toIntOrNull()?.takeIf { it in 0..59 } ?: -1),
+                    hours.value,
+                    minutes.value,
+                    seconds.value
+                ).toString()},
             modifier = Modifier
                 .width(400.dp)
                 .height(70.dp)
-                .padding(start = 20.dp, end = 20.dp, top=15.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 15.dp),
             shape = RoundedCornerShape(10.dp)
         ) {
             Text("Zatwierdź", fontSize = 27.sp)
@@ -177,15 +189,30 @@ fun GameScreen() {
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(10.dp)
-        ){
+        ) {
             Text(text = buildAnnotatedString {
                 append("Odpowiedź: ")
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
-                    append(answer.value ?: "")
+                    append(answer.value)
                 }
             }, fontSize = 27.sp, modifier = Modifier.padding(top=20.dp, start=25.dp))
 
-            Text("Dokładność: ", fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
+            Text(text = buildAnnotatedString {
+                append("Dokładność: ")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    if (accuracy.value.toDoubleOrNull() == -1.0) {
+                        append("Błąd")
+                    }
+                    else {
+                        append(accuracy.value)
+                        if (accuracy.value.isNotEmpty()) {
+                            append(" %")
+                        }
+                    }
+
+                }
+            }, fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
+
             Text("Punkty: ", fontSize = 27.sp, modifier = Modifier.padding(start=25.dp))
         }
     }
