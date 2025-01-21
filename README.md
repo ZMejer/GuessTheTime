@@ -1,4 +1,5 @@
 # GuessTheTime
 PUM - projekt zaliczeniowy  
 [OPIS PROJEKTU](opis-projektu.pdf)
-![Zrzut ekranu](zrzut-ekranu.png)
+<br>
+<img src="zrzut-ekranu.png" width="300" height="auto">
