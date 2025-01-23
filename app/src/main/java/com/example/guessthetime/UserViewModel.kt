@@ -1,5 +1,6 @@
 package com.example.guessthetime
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -27,6 +28,8 @@ class UserViewModel(application: Application) : ViewModel() {
     private val _isUserLoggedIn = userPreferences.getLoggedFlow(application)
     val isUserLoggedIn: Flow<Boolean> get() = _isUserLoggedIn
 
+    val app = application
+
     private val _userId = userPreferences.getUserIdFlow(application)
     val userId: Flow<Int> get() = _userId
 
@@ -42,21 +45,28 @@ class UserViewModel(application: Application) : ViewModel() {
     private val _userPoints = MutableStateFlow(0)
     val userPoints: StateFlow<Int> get() = _userPoints
 
+
+    private val _leaderboard = MutableStateFlow<List<User>>(emptyList())
+    val leaderboard: StateFlow<List<User>> = _leaderboard
+
+
     init {
         val db = UserDatabase.getDatabase(application)
         val dao = db.userDao()
         repository = UserRepository(dao, application)
         fetchUsers()
         fetchUserPoints()
+        getLeaderboard()
     }
 
     private fun fetchUserPoints() {
         viewModelScope.launch {
-            userPreferences.getUserPointsFlow().collect { points ->
+            userPreferences.getUserPointsFlow(app).collect { points ->
                 _userPoints.value = points
             }
         }
     }
+
 
     private fun fetchUsers() {
         viewModelScope.launch {
@@ -65,6 +75,16 @@ class UserViewModel(application: Application) : ViewModel() {
             }
         }
     }
+
+    private fun getLeaderboard() {
+        viewModelScope.launch {
+            repository.getLeaderboard().collect { users ->
+                Log.d("Leaderboard", "Users: $users")
+                _leaderboard.value = users
+            }
+        }
+    }
+
 
 
     fun addUser(user: User) {
@@ -79,18 +99,24 @@ class UserViewModel(application: Application) : ViewModel() {
         }
     }
 
+
+
     fun validateLogin(login: String, password: String) {
         viewModelScope.launch {
             repository.validateLogin(login, password).collect { users ->
                 if (users.isNotEmpty()) {
                     repository.logIn(true)
                     repository.storeUser(users[0].id)
+                    repository.storeUserPoints(users[0].points)
+                    val points = repository.getUserPoints(users[0].id)
+                    _userPoints.emit(points)
                 } else {
                     repository.logIn(false)
                 }
             }
         }
     }
+
 
     fun logout() {
         viewModelScope.launch {
@@ -136,7 +162,7 @@ class UserViewModel(application: Application) : ViewModel() {
     fun updatePoints(userId: Int, newPoints: Int) {
         viewModelScope.launch {
             repository.updatePoints(userId, newPoints)
-            userPreferences.storeUserPoints(newPoints)
+            userPreferences.storeUserPoints(app,newPoints)
         }
     }
 
@@ -144,8 +170,10 @@ class UserViewModel(application: Application) : ViewModel() {
         viewModelScope.launch {
             repository.getUserById(userId).collect { user ->
                 _userPoints.value = user.points
-                userPreferences.storeUserPoints(user.points)
+                userPreferences.storeUserPoints(app,user.points)
             }
         }
     }
+
+
 }

@@ -64,9 +64,9 @@ fun ClockCanvas(hours: Int, minutes: Int, seconds: Int) {
             center = androidx.compose.ui.geometry.Offset(centerX, centerY),
             style = androidx.compose.ui.graphics.drawscope.Stroke(width = 8f)
         )
-        drawHand(centerX, centerY, (hours % 12) * 30 + minutes / 2f, radius * 0.5f, 16f) // Hour hand
-        drawHand(centerX, centerY, minutes * 6 + seconds / 10f, radius * 0.7f, 8f)   // Minute hand
-        drawHand(centerX, centerY, seconds * 6f, radius * 0.9f, 4f, secondHandColor)       // Second hand
+        drawHand(centerX, centerY, (hours % 12) * 30 + minutes / 2f, radius * 0.5f, 16f)
+        drawHand(centerX, centerY, minutes * 6 + seconds / 10f, radius * 0.7f, 8f)
+        drawHand(centerX, centerY, seconds * 6f, radius * 0.9f, 4f, secondHandColor)
     }
 }
 

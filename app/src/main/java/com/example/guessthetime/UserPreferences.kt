@@ -40,12 +40,12 @@ class UserPreferences(private val context: Context) {
         }
     }
 
-    suspend fun storeUserPoints(points: Int) {
+    suspend fun storeUserPoints(context: Context, points: Int) {
         context.dataStore.edit { preferences ->
             preferences[USER_POINTS] = points
         }
     }
-    fun getUserPointsFlow(): Flow<Int> {
+    fun getUserPointsFlow(context: Context): Flow<Int> {
         return context.dataStore.data.map { preferences ->
             preferences[USER_POINTS] ?: 0
         }

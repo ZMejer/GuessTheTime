@@ -3,6 +3,7 @@ package com.example.guessthetime
 import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -111,6 +112,7 @@ fun ProfileScreen() {
                 modifier = Modifier.padding(bottom=30.dp)
             )
         }
+        Spacer(modifier = Modifier.height(250.dp))
         Button(
             onClick = {
                 viewModel.logout()

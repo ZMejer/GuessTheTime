@@ -33,7 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.guessthetime.ui.theme.GuessTheTimeTheme
-
+import androidx.compose.ui.graphics.Color
 @Composable
 fun RegisterScreen() {
     val viewModel: UserViewModel = viewModel(
@@ -53,6 +53,7 @@ fun RegisterScreen() {
     val email = remember { mutableStateOf("") }
     val login = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+    var message = remember { mutableStateOf("") }
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(top = 110.dp, bottom=150.dp),
@@ -132,7 +133,8 @@ fun RegisterScreen() {
             item {
                 Button(
                     onClick = {
-                        viewModel.addUser(User(0,name.value.toString(),surname.value.toString(),email.value.toString(),login.value.toString(),password.value.toString()))
+                        viewModel.addUser(User(0,name.value.toString(),surname.value.toString(),email.value.toString(),login.value.toString(),password.value.toString(),0))
+                        message.value = "Rejestracja przebiegła pomyślnie"
                     },
                     modifier = Modifier
                         .width(400.dp)
@@ -143,28 +145,15 @@ fun RegisterScreen() {
                     Text("Zarejestruj się", fontSize = 29.sp)
                 }
             }
-            items(users.size) { index ->
+            item {
                 Text(
-                    text = "${users[index].name} ${users[index].surname}",
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Right,
-                    modifier = Modifier
-                        .padding(end = 20.dp)
+                    text = message.value,
+                    fontSize = 27.sp,
+                    color = Color(0xFF37823c),
+                    modifier = Modifier.padding(start=10.dp, end=10.dp),
+                    fontWeight = FontWeight.Bold
                 )
-                Text(
-                    text = "${users[index].login} ${users[index].email}",
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Right,
-                    modifier = Modifier
-                        .padding(end = 20.dp)
-                )
-                Text(
-                    text = "${users[index].id} ${users[index].password}",
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Right,
-                    modifier = Modifier
-                        .padding(end = 20.dp, bottom = 15.dp)
-                )
+
             }
         }
     }

@@ -17,7 +17,7 @@ data class User(
     val email: String,
     val login: String,
     val password: String,
-    val points: Int = 0
+    val points: Int
     ) {
     constructor() : this(0, "","","","","",0)
 }
@@ -61,5 +61,11 @@ interface UserDao {
 
     @Query("UPDATE users_table SET points = :newPoints WHERE id = :userId")
     suspend fun updatePoints(userId: Int, newPoints: Int)
+
+    @Query("SELECT * FROM users_table WHERE points > 0 ORDER BY points DESC LIMIT 10\n")
+    fun getLeaderboard(): Flow<List<User>>
+
+    @Query("SELECT points FROM users_table WHERE id = :userId LIMIT 1")
+    suspend fun getUserPoints(userId: Int): Int
 
 }

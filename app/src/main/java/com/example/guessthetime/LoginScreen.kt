@@ -98,11 +98,6 @@ fun LoginScreen() {
             ) {
                 Text("Zaloguj się", fontSize = 29.sp)
             }
-            Text(
-                text = if (isUserLoggedIn.value) "Zalogowany: true" else "Zalogowany: false",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(top = 20.dp)
-            )
         }
     }
 }
